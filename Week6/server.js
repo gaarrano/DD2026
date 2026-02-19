@@ -24,6 +24,7 @@ app.use(express.static(path.join(__dirname, 'static')));
 
 // data
 const directory = require("./data/directory.json");
+const { title } = require('process');
 
 console.log(directory);
 
@@ -80,15 +81,46 @@ app.get("/directory", (req, res) => {
     res.render("directory", {directory: directory});
 });
 
+app.get("/person/add", (req, res) => {
+
+    console.log(req.params);
+    console.log(req.query);
+
+    directory.push({
+        id: parseInt(req.query.id),
+        first_name: req.query.first_name,
+        last_name: req.query.last_name,
+        email: req.query.email,
+        address: req.query.address,
+        city: req.query.city,
+        state: req.query.state,
+        zip: req.query.zip
+    });
+    console.log(directory);
+
+    res.send("add_person");
+});
+
 
 app.get("/directory/:id", (req, res) => {
     // TODO: find person with id from directory and pass it to the template
-    res.render("directory", {directory: directory});
+    const id = req.params.id;
+    console.log(id);
+
+    let person = directory.find((p) => p.id == id);
+    
+    res.render("person", {person: person, title: person.first_name + " " + person.last_name});
 });
+
+
+
+
+
+
 
 //start the server
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+  console.log(`Example app listening at http://localhost:${port}`)
 });
 
 
